@@ -1,13 +1,13 @@
 package auth
 
 import (
-	"auth/models"
 	"context"
 	"encoding/json"
 	"net/http"
 	"strings"
 
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/mendezandrewm/monGo-UserDB/models"
 )
 
 // Exception ...

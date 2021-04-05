@@ -1,27 +1,38 @@
 package main
 
 import (
-	"auth/routes"
-	"fmt"
-	"log"
-	"net/http"
 	"os"
 
-	"github.com/joho/godotenv"
+	"github.com/gin-gonic/gin"
+
+	"github.com/mendezandrewm/monGo-UserDB/middleware"
+	"github.com/mendezandrewm/monGo-UserDB/routes"
 )
 
 func main() {
-	e := godotenv.Load()
-
-	if e != nil {
-		log.Fatal("Failed to load .env file")
-	}
-	fmt.Println(e)
-
 	port := os.Getenv("PORT")
 
-	http.Handle("/", routes.Handlers())
+	if port == "" {
+		port = "8000"
+	}
 
-	log.Printf("Server running on Port#: '%s'", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	router := gin.New()
+	router.Use(gin.Logger())
+	routes.UserRoutes(router)
+
+	router.Use(middleware.Authentication())
+
+	// API-2
+	router.GET("/api-1", func(c *gin.Context) {
+
+		c.JSON(200, gin.H{"success": "Access granted for api-1"})
+
+	})
+
+	// API-1
+	router.GET("/api-2", func(c *gin.Context) {
+		c.JSON(200, gin.H{"success": "Access granted for api-2"})
+	})
+
+	router.Run(":" + port)
 }
